@@ -1,0 +1,25 @@
+.program spi_write_read
+.side_set 1
+
+; always transmit multiple of 32 bytes
+public write:
+    set pindirs, 1 [15]     side 0
+    irq clear 0		    side 0
+write_loop:
+    out pins, 1             side 0
+    jmp x-- write_loop      side 1
+write_stop:
+    irq 0		    side 0
+    set pindirs, 0          side 0
+    jmp write_stop	    side 0
+
+public read:
+    set pindirs, 0          side 0
+    irq clear 0		    side 0
+read_loop:
+    in pins, 1              side 1
+    jmp x-- read_loop       side 0
+read_stop:
+    irq 0		    side 0
+    jmp read_stop	    side 0
+    
